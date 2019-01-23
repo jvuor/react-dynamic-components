@@ -22,11 +22,23 @@ class App extends Component {
       components: [],
       identity: 0
     }
+    const timer = setInterval(this.handleTimer, 1000)
   }
 
-  addComponent (name) {
+  handleTimer = () => {
+    const newState = {}
+    Object
+      .keys(this.state.data)
+      .forEach(key => {
+        const newNum = this.state.data[key] + 1
+        newState[key] = (newNum === 10 ? 0 : newNum)
+      })
+    this.setState({data: newState})
+  }
+
+  addComponent (name, variables) {
     const id = this.state.identity + 1
-    const newComponent = { id, name, variables: [1, 2] }
+    const newComponent = { id, name, variables }
     const newComponentList = [...this.state.components, newComponent]
     this.setState({ components: newComponentList, identity: id })
   }
@@ -40,8 +52,8 @@ class App extends Component {
   render() {
     return (
       <div>
-        <AddComponent callback={(name) => this.addComponent(name)} />
-        <ComponentFactory components={this.state.components} />
+        <AddComponent callback={(name, variables) => this.addComponent(name, variables)} />
+        <ComponentFactory components={this.state.components} data={this.state.data} />
       </div>
     );
   }
